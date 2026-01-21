@@ -11,6 +11,12 @@ A native macOS MP3 player inspired by the classic Winamp. Built with Swift, Swif
 
 ## History
 
+### [2026-01-21] Native Feature Refinement | [log-20260121-feature-refinement](./GEMINI--logs.md#log-20260121-feature-refinement)
+- Implemented bidirectional Shuffle (works with Prev and Next).
+- Added Playlist Search with dynamic queue management.
+- Unified Play/Pause transport control and removed Stop/Volume.
+- Fixed progress bar seeking sensitivity.
+
 ### [2026-01-21] Native Swift Overhaul | [log-20260121-swift-native](./GEMINI--logs.md#log-20260121-swift-native)
 - Completely rebuilt the app in Swift for native macOS performance.
 - Implemented retro UI matching classic Winamp skin.

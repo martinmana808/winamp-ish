@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import Combine
+import Accelerate
 
 struct Track: Identifiable, Equatable {
     let id = UUID()
@@ -15,18 +16,38 @@ struct Track: Identifiable, Equatable {
 @MainActor
 class PlayerViewModel: ObservableObject {
     @Published var playlist: [Track] = []
-    @Published var currentIndex: Int = -1
+    @Published var searchText: String = ""
+    @Published var currentIndexInFiltered: Int = -1
     @Published var isPlaying: Bool = false
     @Published var isShuffle: Bool = false
     @Published var currentTime: Double = 0
     @Published var duration: Double = 0
-    @Published var volume: Float = 0.8 {
-        didSet { player?.volume = volume }
+    
+    // Set volume to always 1.0 per user request
+    let volume: Float = 1.0
+    
+    // Flag to prevent timer updates while user is scrubbing
+    var isScrubbing: Bool = false
+    
+    var filteredPlaylist: [Track] {
+        if searchText.isEmpty {
+            return playlist
+        } else {
+            return playlist.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+        }
     }
+    
+    // Current track based on the filtered list
+    var currentTrack: Track? {
+        guard currentIndexInFiltered >= 0 && currentIndexInFiltered < filteredPlaylist.count else { return nil }
+        return filteredPlaylist[currentIndexInFiltered]
+    }
+    
+    @Published var spectrum: [Float] = Array(repeating: 0, count: 20)
     
     private var player: AVPlayer?
     private var timeObserver: Any?
-    private var cancellables = Set<AnyCancellable>()
+    private var visualizerTimer: AnyCancellable?
     
     init() {}
     
@@ -36,15 +57,15 @@ class PlayerViewModel: ObservableObject {
         }
         playlist.append(contentsOf: newTracks)
         
-        if currentIndex == -1 && !playlist.isEmpty {
+        if currentIndexInFiltered == -1 && !filteredPlaylist.isEmpty {
             loadTrack(at: 0)
         }
     }
     
     func loadTrack(at index: Int) {
-        guard index >= 0 && index < playlist.count else { return }
-        currentIndex = index
-        let track = playlist[index]
+        guard index >= 0 && index < filteredPlaylist.count else { return }
+        currentIndexInFiltered = index
+        let track = filteredPlaylist[index]
         
         player?.pause()
         if let observer = timeObserver {
@@ -54,33 +75,44 @@ class PlayerViewModel: ObservableObject {
         player = AVPlayer(url: track.url)
         player?.volume = volume
         
-        // Duration
+        // Duration logic
         let asset = AVAsset(url: track.url)
         Task {
             if let durationValue = try? await asset.load(.duration) {
                 let d = CMTimeGetSeconds(durationValue)
-                await MainActor.run {
-                    self.duration = d
-                }
+                await MainActor.run { self.duration = d }
             }
         }
         
         // Time observation
-        timeObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 600), queue: .main) { [weak self] time in
+        timeObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { [weak self] time in
             let t = CMTimeGetSeconds(time)
-            Task { @MainActor in
-                self?.currentTime = t
+            Task { @MainActor in 
+                if let self = self, !self.isScrubbing {
+                    self.currentTime = t 
+                }
             }
         }
         
         NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem, queue: .main) { [weak self] _ in
-            Task { @MainActor in
-                self?.next()
-            }
+            Task { @MainActor in self?.next() }
         }
         
         if isPlaying {
             player?.play()
+        }
+        
+        startVisualizerTimer()
+    }
+    
+    private func startVisualizerTimer() {
+        visualizerTimer?.cancel()
+        visualizerTimer = Timer.publish(every: 0.05, on: .main, in: .common).autoconnect().sink { [weak self] _ in
+            guard let self = self, self.isPlaying else { 
+                self?.spectrum = Array(repeating: 0, count: 20)
+                return 
+            }
+            self.spectrum = (0..<20).map { _ in Float.random(in: 2...15) }
         }
     }
     
@@ -88,7 +120,7 @@ class PlayerViewModel: ObservableObject {
         if isPlaying {
             player?.pause()
         } else {
-            if currentIndex == -1 && !playlist.isEmpty {
+            if currentIndexInFiltered == -1 && !filteredPlaylist.isEmpty {
                 loadTrack(at: 0)
             }
             player?.play()
@@ -100,25 +132,32 @@ class PlayerViewModel: ObservableObject {
         player?.pause()
         player?.seek(to: .zero)
         isPlaying = false
+        spectrum = Array(repeating: 0, count: 20)
     }
     
     func next() {
-        guard !playlist.isEmpty else { return }
-        if isShuffle && playlist.count > 1 {
-            var nextIndex: Int
+        guard !filteredPlaylist.isEmpty else { return }
+        var nextIndex: Int
+        if isShuffle && filteredPlaylist.count > 1 {
             repeat {
-                nextIndex = Int.random(in: 0..<playlist.count)
-            } while nextIndex == currentIndex
-            loadTrack(at: nextIndex)
+                nextIndex = Int.random(in: 0..<filteredPlaylist.count)
+            } while nextIndex == currentIndexInFiltered
         } else {
-            let nextIndex = (currentIndex + 1) % playlist.count
-            loadTrack(at: nextIndex)
+            nextIndex = (currentIndexInFiltered + 1) % filteredPlaylist.count
         }
+        loadTrack(at: nextIndex)
     }
     
     func prev() {
-        guard !playlist.isEmpty else { return }
-        let prevIndex = (currentIndex - 1 + playlist.count) % playlist.count
+        guard !filteredPlaylist.isEmpty else { return }
+        var prevIndex: Int
+        if isShuffle && filteredPlaylist.count > 1 {
+            repeat {
+                prevIndex = Int.random(in: 0..<filteredPlaylist.count)
+            } while prevIndex == currentIndexInFiltered
+        } else {
+            prevIndex = (currentIndexInFiltered - 1 + filteredPlaylist.count) % filteredPlaylist.count
+        }
         loadTrack(at: prevIndex)
     }
     
@@ -130,7 +169,7 @@ class PlayerViewModel: ObservableObject {
     func clearPlaylist() {
         stop()
         playlist.removeAll()
-        currentIndex = -1
+        currentIndexInFiltered = -1
         currentTime = 0
         duration = 0
     }

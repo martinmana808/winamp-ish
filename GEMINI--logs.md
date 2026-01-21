@@ -223,3 +223,29 @@ I have successfully rebuilt the Winamp clone as a **native macOS application** u
 2. Open terminal in the project directory.
 3. Run: `swift run`
 4. The Winamp window will appear. Drag MP3s onto it and enjoy! 🍎🎵
+
+<a name="log-20260121-feature-refinement"></a>
+## [2026-01-21] Winamp Build: Native Feature Refinement
+
+**User Prompt:**
+- Shuffle only works with NEXT TRACK, but it should work with PREVIOUS TRACK as well
+- The play button, if playing, should turn into the PAUSE button, and if PAUSED (not playing) it turns into the play button
+- At the top of the playlist we could have a small search field, that as you type it returns. as long as we dont clear that search query, the 'QUEUE LIST' is those results. 
+- Remove the STOP button
+- Remove the volume slider. Volume should always be 100%. 
+- Sometimes I click in the progress bar and the playhead dont go there. 
+
+**Walkthrough:**
+### Features Implemented:
+1. **Bidirectional Shuffle**: Shuffle logic now applies to both "Next" and "Previous" actions.
+2. **Unified Play/Pause**: The transport control now features a single dynamic button that toggles between Play and Pause based on the current state.
+3. **Playlist Search**: A new search bar at the top of the playlist allows for instant filtering. The playback queue respects the filtered list.
+4. **UI Cleanup**:
+    - Removed the **Stop** button.
+    - Removed the **Volume** slider (locked at 100% for maximum output).
+5. **Seeking Fix**: Improved the progress bar interaction by using `onEditingChanged` to pause time updates while scrubbing and ensuring the seek command is sent on release.
+
+**Technical Details:**
+- **PlayerViewModel.swift**: Updated with `searchText` and `filteredPlaylist` logic. Refactored `next()` and `prev()` for shuffle consistency.
+- **PlayerView.swift**: Integrated `TextField` and updated transport control layouts. Fix progress bar sensitivity.
+- **Concurrency**: Handled MainActor isolation for `isScrubbing` check in periodic time observer.
