@@ -40,6 +40,7 @@ body {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    -webkit-app-region: drag;
 }
 
 .glass-container:hover {
@@ -57,7 +58,29 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    -webkit-app-region: no-drag;
 }
+
+/* Window Title Bar for Electron */
+.win-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.win-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.win-dot.close { background: #ff5f56; }
+.win-dot.min { background: #ffbd2e; }
+.win-dot:hover { opacity: 0.8; }
+
 
 /* Header */
 .header {
@@ -213,6 +236,7 @@ input[type="range"]::-webkit-slider-thumb {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    -webkit-app-region: no-drag;
 }
 
 .playlist-header h3 {

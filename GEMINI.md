@@ -5,10 +5,16 @@ A pure-file-based MP3 player inspired by Winamp. Built with Vanilla JS and high-
 
 ## Tech Stack
 - **Frontend**: HTML5, Vanilla JavaScript, CSS3
+- **Desktop Shell**: Electron
 - **Audio API**: Web Audio API
 - **Visuals**: Canvas API for visualizers
 
 ## History
+
+### [2026-01-21] Native Desktop Conversion | [log-20260121-electron-desktop](./GEMINI--logs.md#log-20260121-electron-desktop)
+- Wrapped the application in Electron for a native macOS experience.
+- Implemented frameless window with macOS vibrancy effects.
+- Added custom window controls and draggable UI areas.
 
 ### [2026-01-21] Core Build Completed | [log-20260121-winamp-build](./GEMINI--logs.md#log-20260121-winamp-build)
 - Implemented core player UI with Glassmorphism design.

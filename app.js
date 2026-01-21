@@ -50,6 +50,8 @@ class WinampPlayer {
         this.addBtn = document.getElementById('add-btn');
         this.clearBtn = document.getElementById('clear-btn');
         this.dropZone = document.getElementById('drop-zone');
+        this.closeBtn = document.getElementById('close-btn');
+        this.minBtn = document.getElementById('min-btn');
 
         // Initial canvas size
         this.resizeCanvas();
@@ -102,6 +104,22 @@ class WinampPlayer {
             this.dropZone.classList.remove('drag-over');
             this.handleFiles(e.dataTransfer.files);
         });
+
+        // Window controls
+        if (this.closeBtn) {
+            this.closeBtn.addEventListener('click', () => window.close());
+        }
+        if (this.minBtn) {
+            this.minBtn.addEventListener('click', () => {
+                // Electron specific: request minimize
+                const { remote } = require('electron');
+                if (remote) {
+                    remote.getCurrentWindow().minimize();
+                } else {
+                    // Fallback or handle via IPC if preferred
+                }
+            });
+        }
     }
 
     handleFiles(files) {

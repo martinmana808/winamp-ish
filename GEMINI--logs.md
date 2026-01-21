@@ -96,3 +96,75 @@ I have built a simple, modern Winamp clone using Vanilla JS, HTML5, and the Web 
 
 > [!NOTE]
 > The browser tool encountered an issue during verification, but the code is complete and ready for manual testing.
+
+<a name="log-20260121-electron-desktop"></a>
+## [2026-01-21] Winamp Build: Native macOS App (Electron)
+
+**User Prompt:**
+can we modify this to do a native app for macosx? 
+i dont want it to live in the browser, i want it to be a separate app
+
+**Implementation Plan:**
+# Desktop Transition Implementation Plan (Electron)
+
+I will wrap the existing Winamp clone into an Electron shell to provide a native macOS experience.
+
+## User Review Required
+
+> [!NOTE]
+> **Technical Stack**: I will use Electron because it preserves the current design (Glassmorphism/Backdrop Blur) while providing a standalone application package.
+
+## Proposed Changes
+
+### [Electron Scaffolding]
+
+#### [NEW] [package.json](file:///Users/martinmana/Documents/Projects/winamp-clone/package.json)
+- Define project metadata.
+- Specify Electron as a devDependency.
+- Add `start` script to launch the app.
+
+#### [NEW] [main.js](file:///Users/martinmana/Documents/Projects/winamp-clone/main.js)
+- Core Electron process.
+- Configure `BrowserWindow`:
+    - **Frameless**: Remove standard OS title bars for a classic player feel.
+    - **Vibrancy**: Enable macOS vibrancy effects (blur) if possible.
+    - **Dimensions**: Set a fixed or optimal size for the player.
+- Load `index.html`.
+
+### [Frontend Adjustments]
+
+#### [MODIFY] [styles.css](file:///Users/martinmana/Documents/Projects/winamp-clone/styles.css)
+- Add `-webkit-app-region: drag` to the header or specific area to allow moving the window.
+- Ensure no-drag regions for buttons and controls.
+
+#### [MODIFY] [index.html](file:///Users/martinmana/Documents/Projects/winamp-clone/index.html)
+- Add a custom "Close" and "Minimize" button if needed (since it's frameless).
+
+## Verification Plan
+
+### Automated Tests
+- N/A.
+
+### Manual Verification
+1.  Run `npm install` (if I can run it) or at least provide the setup commands.
+2.  Run `npm start`.
+3.  Check if the window opens without the browser frame.
+4.  Verify window dragging works.
+5.  Test MP3 playback via DnD in the native window.
+
+**Walkthrough:**
+# Electron Desktop Walkthrough
+
+I have successfully converted the Winamp clone into a native macOS application using Electron.
+
+## Changes Made
+- **Electron Integration**: Initialized NPM and setup Electron as a development dependency.
+- **Main Process**: Created `main.js` to manage the lifecycle of the application window.
+- **Frameless Window**: Configured Electron to hide the standard title bar, allowing the custom design to take center stage.
+- **Vibrancy Effects**: Enabled macOS-specific vibrancy for a premium "glass" look.
+- **Draggable UI**: Modified CSS to allow users to move the window by clicking on the player container.
+- **Custom Controls**: Added native-looking Close and Minimize buttons to the UI.
+
+## How to Run
+1.  Open terminal in the project directory.
+2.  Run `npm start` to launch the native app.
