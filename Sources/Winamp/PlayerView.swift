@@ -56,7 +56,7 @@ struct PlayerView: View {
 
                 // Main Player Area
                 VStack(spacing: 12) {
-                    // LCD Display Area
+                    // LCD Display Area - Responsive Width
                     HStack(spacing: 10) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(vm.isPlaying ? "▶" : "||")
@@ -77,6 +77,7 @@ struct PlayerView: View {
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(WinampColors.text)
                                 .lineLimit(1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             
                             HStack {
                                 Text("192 kbps")
@@ -87,14 +88,18 @@ struct PlayerView: View {
                             .font(.system(size: 9))
                             .foregroundColor(WinampColors.text.opacity(0.7))
                             
-                            // Real animated spectrum bars
-                            HStack(alignment: .bottom, spacing: 1) {
-                                ForEach(0..<vm.spectrum.count, id: \.self) { i in
-                                    Rectangle()
-                                        .fill(WinampColors.text)
-                                        .frame(width: 2, height: CGFloat(vm.spectrum[i]))
+                            // Real animated spectrum bars - Adaptive count
+                            GeometryReader { geo in
+                                HStack(alignment: .bottom, spacing: 1) {
+                                    let barCount = Int(geo.size.width / 3)
+                                    ForEach(0..<max(1, barCount), id: \.self) { i in
+                                        Rectangle()
+                                            .fill(WinampColors.text)
+                                            .frame(width: 2, height: i < vm.spectrum.count ? CGFloat(vm.spectrum[i]) : CGFloat.random(in: 2...12))
+                                    }
                                 }
                             }
+                            .frame(height: 15)
                         }
                     }
                     .padding(10)
@@ -112,12 +117,10 @@ struct PlayerView: View {
                         .accentColor(.green)
                     }
                     
-                    // Transport Controls
+                    // Transport Controls - Responsive spacing
                     HStack(spacing: 5) {
-                        // PREV
                         transportButton(label: "|<<") { vm.prev() }
                         
-                        // PLAY/PAUSE
                         Button(action: { vm.togglePlay() }) {
                             Text(vm.isPlaying ? "PAUSE" : "PLAY")
                                 .font(.system(size: 10, weight: .bold))
@@ -128,10 +131,8 @@ struct PlayerView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         
-                        // NEXT
                         transportButton(label: ">>|") { vm.next() }
                         
-                        // SHUFFLE
                         Button(action: { vm.isShuffle.toggle() }) {
                             Text("SHUFFLE")
                                 .font(.system(size: 8))
@@ -146,7 +147,7 @@ struct PlayerView: View {
                 .padding(12)
                 .background(WinampColors.bg.opacity(0.9))
                 
-                // Playlist Area
+                // Playlist Area - Responsive Height and Width
                 VStack(spacing: 0) {
                     // Search Field
                     HStack {
@@ -183,7 +184,7 @@ struct PlayerView: View {
                             }
                             .foregroundColor(.green.opacity(0.5))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .padding(.top, 40)
+                            .padding(.vertical, 40)
                             .listRowBackground(Color.black)
                         } else {
                             ForEach(Array(vm.filteredPlaylist.enumerated()), id: \.element.id) { index, track in
@@ -225,7 +226,7 @@ struct PlayerView: View {
             }
             .border(Color.white.opacity(0.1), width: 1)
         }
-        .frame(width: 275)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .preferredColorScheme(.dark)
     }
     

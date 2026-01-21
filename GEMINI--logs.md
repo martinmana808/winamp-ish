@@ -249,3 +249,24 @@ I have successfully rebuilt the Winamp clone as a **native macOS application** u
 - **PlayerViewModel.swift**: Updated with `searchText` and `filteredPlaylist` logic. Refactored `next()` and `prev()` for shuffle consistency.
 - **PlayerView.swift**: Integrated `TextField` and updated transport control layouts. Fix progress bar sensitivity.
 - **Concurrency**: Handled MainActor isolation for `isScrubbing` check in periodic time observer.
+
+<a name="log-20260121-responsive-ui"></a>
+## [2026-01-21] Winamp Build: Native Responsiveness Overhaul
+
+**User Prompt:**
+it has to be a responsive app. The window expands but the 'actual design/app' stays the same. It needs to be dynamic, responsive. 
+
+**Walkthrough:**
+### Features Implemented:
+1. **Fluid Window Scaling**: Removed the fixed 275px width constraint. The application now expands and contracts fluidly with the macOS window.
+2. **Adaptive Spectrum Analyzer**: Replaced the static visualizer bars with a `GeometryReader`-driven system. The number of bars and their layout now dynamically adjusts to fill the width of the display area.
+3. **Responsive HUD**: The main player info (track title, stats, etc.) now uses flexible frames to fill the available horizontal space.
+4. **Stretching Playlist**: The playlist container, search bar, and footer all expand horizontally to match the window width.
+
+**Technical Details:**
+- **WinampApp.swift**: Updated `WindowGroup` frame constraints to `minWidth: 275, maxWidth: .infinity`.
+- **PlayerView.swift**:
+    - Replaced fixed widths with `.frame(maxWidth: .infinity)`.
+    - Implemented `GeometryReader` inside the visualizer layout to calculate bar counts based on available width.
+    - Adjusted `VStack` and `HStack` alignments for better centering and expansion.
+- **Visuals**: The classic retro aesthetic is maintained while gaining modern responsive behaviors.

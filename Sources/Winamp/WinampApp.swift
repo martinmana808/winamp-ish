@@ -16,8 +16,7 @@ struct WinampApp: App {
     var body: some Scene {
         WindowGroup {
             PlayerView()
-                .frame(width: 275)
-                .frame(minHeight: 400, maxHeight: .infinity)
+                .frame(minWidth: 275, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
         }
         .windowStyle(HiddenTitleBarWindowStyle())
     }
