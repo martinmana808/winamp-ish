@@ -168,3 +168,58 @@ I have successfully converted the Winamp clone into a native macOS application u
 ## How to Run
 1.  Open terminal in the project directory.
 2.  Run `npm start` to launch the native app.
+
+<a name="log-20260121-swift-native"></a>
+## [2026-01-21] Winamp Build: Native Swift (macOS) Overhaul
+
+**User Prompt:**
+Could we remove it from Electron and have it actually done in swift? So I can make the most out of my app within the macos system
+
+**Implementation Plan:**
+# Native Swift (macOS) Implementation Plan
+
+I will rebuild the Winamp clone as a native macOS application using **SwiftUI** and **AVFoundation**. This will provide the best performance, native window behavior, and system integration.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Swift Environment**: I will generate a standalone Swift script or a simplified project structure that can be run with `swift run` or compiled. For a full `.app` bundle, Xcode is usually required, but I will provide the core code that can be easily dropped into an Xcode project.
+
+## Proposed Changes
+
+### [Audio Engine]
+- Use `AVQueuePlayer` or `AVAudioEngine` for high-performance audio playback.
+- Implement an `ObservableObject` in Swift to manage the playlist, current track, and shuffle state.
+
+### [UI Layer (SwiftUI)]
+- **Retro Design**: Use SwiftUI's drawing primitives and custom fonts to recreate the Winamp look.
+- **Glassmorphism/Vibrancy**: Use native `NSVisualEffectView` wrappers for the backdrop blur.
+- **Resizing**: Leverage SwiftUI's flexible layouts to allow the playlist to expand vertically.
+
+### [Visualizer]
+- Use `AVAudioEngine` and a tapping node to get real-time frequency data.
+- Draw the spectrum using SwiftUI's `Canvas` or `Path`.
+
+**Walkthrough:**
+# Native Swift Winamp Walkthrough
+
+I have successfully rebuilt the Winamp clone as a **native macOS application** using **Swift** and **SwiftUI**. This implementation provides the best performance and deepest integration with macOS.
+
+## Core Features
+- **Swift Audio Engine**: Powered by `AVFoundation` for high-fidelity playback.
+- **Classic Retro UI**: A pixel-perfect recreation of the classic Winamp look using native SwiftUI components.
+- **Shuffle Mode**: Intelligent randomization of your tracks.
+- **Native Drag & Drop**: Drag MP3 files directly from Finder into the playlist.
+- **Resizable Playlist**: The playlist area expands vertically as you resize the window.
+- **macOS Integration**: Uses `NSVisualEffectView` for native translucency and follows macOS window behaviors.
+
+## Architecture
+- **WinampApp.swift**: Entry point managing the window and lifecycle.
+- **PlayerViewModel.swift**: The "brain" managing audio state, playlist logic, and `AVPlayer`.
+- **PlayerView.swift**: The UI layer using custom SwiftUI views to mimic the metallic/LCD look.
+
+## How to Run
+1. Ensure you have Swift installed (part of Xcode Command Line Tools).
+2. Open terminal in the project directory.
+3. Run: `swift run`
+4. The Winamp window will appear. Drag MP3s onto it and enjoy! 🍎🎵

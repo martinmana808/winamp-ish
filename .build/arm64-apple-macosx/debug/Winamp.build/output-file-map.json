@@ -1,0 +1,23 @@
+{
+  "": {
+    "swift-dependencies": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/master.swiftdeps"
+  },
+  "/Users/martinmana/Documents/Projects/winamp-clone/Sources/Winamp/PlayerView.swift": {
+    "dependencies": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/PlayerView.d",
+    "object": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/PlayerView.swift.o",
+    "swiftmodule": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/PlayerView~partial.swiftmodule",
+    "swift-dependencies": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/PlayerView.swiftdeps"
+  },
+  "/Users/martinmana/Documents/Projects/winamp-clone/Sources/Winamp/PlayerViewModel.swift": {
+    "dependencies": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/PlayerViewModel.d",
+    "object": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/PlayerViewModel.swift.o",
+    "swiftmodule": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/PlayerViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/PlayerViewModel.swiftdeps"
+  },
+  "/Users/martinmana/Documents/Projects/winamp-clone/Sources/Winamp/WinampApp.swift": {
+    "dependencies": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/WinampApp.d",
+    "object": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/WinampApp.swift.o",
+    "swiftmodule": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/WinampApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/martinmana/Documents/Projects/winamp-clone/.build/arm64-apple-macosx/debug/Winamp.build/WinampApp.swiftdeps"
+  }
+}
