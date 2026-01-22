@@ -270,3 +270,23 @@ it has to be a responsive app. The window expands but the 'actual design/app' st
     - Implemented `GeometryReader` inside the visualizer layout to calculate bar counts based on available width.
     - Adjusted `VStack` and `HStack` alignments for better centering and expansion.
 - **Visuals**: The classic retro aesthetic is maintained while gaining modern responsive behaviors.
+
+<a name="log-20260121-interaction-refinement"></a>
+## [2026-01-21] Winamp Build: Playlist Interaction Refinement
+
+**User Prompt:**
+- I would like to be able to do right click in a given file in the queue and have some options: Copy, Reveal in Finder, 
+- In the queue list, each song has to be the whole row (not only where there is text) so I can click on a row's 'empty area' and still click the song. 
+- we need to make sure that whereever I am, as long as I have the app as active app, SPACEBAR is PLAY/PAUSE
+
+**Walkthrough:**
+### Features Implemented:
+1. **Spacebar Shortcut**: Added `.keyboardShortcut(.space, modifiers: [])` to the Play/Pause button. This allows toggling playback anywhere in the app unless a text field is focused.
+2. **Context Menu**: Implemented `.contextMenu` on playlist rows with "Copy Path" (using `NSPasteboard`) and "Reveal in Finder" (using `NSWorkspace`).
+3. **Full-Row Selection**: Applied `.contentShape(Rectangle())` and moved `onTapGesture` to the row container, ensuring the entire row width is hit-testable.
+
+**Technical Details:**
+- **PlayerView.swift**:
+    - Wrapped the playlist item `HStack` in a container that fills the entire row width.
+    - Added `contextMenu` and `keyboardShortcut` modifiers.
+    - Verified that spacebar in the search field still works correctly for typing.

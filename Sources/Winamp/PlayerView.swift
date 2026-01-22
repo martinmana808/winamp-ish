@@ -130,6 +130,7 @@ struct PlayerView: View {
                                 .border(Color.white.opacity(0.1), width: 1)
                         }
                         .buttonStyle(PlainButtonStyle())
+                        .keyboardShortcut(.space, modifiers: [])
                         
                         transportButton(label: ">>|") { vm.next() }
                         
@@ -195,9 +196,21 @@ struct PlayerView: View {
                                     Spacer()
                                 }
                                 .padding(.vertical, 1)
+                                .contentShape(Rectangle()) // Make the whole row clickable
                                 .onTapGesture {
                                     vm.loadTrack(at: index)
                                     if !vm.isPlaying { vm.togglePlay() }
+                                }
+                                .contextMenu {
+                                    Button("Copy Path") {
+                                        let pasteboard = NSPasteboard.general
+                                        pasteboard.clearContents()
+                                        pasteboard.setString(track.url.path, forType: .string)
+                                    }
+                                    
+                                    Button("Reveal in Finder") {
+                                        NSWorkspace.shared.activateFileViewerSelecting([track.url])
+                                    }
                                 }
                                 .listRowBackground(vm.currentIndexInFiltered == index ? Color.blue.opacity(0.4) : Color.black)
                             }

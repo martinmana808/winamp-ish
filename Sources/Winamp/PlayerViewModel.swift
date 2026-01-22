@@ -2,6 +2,7 @@ import Foundation
 import AVFoundation
 import Combine
 import Accelerate
+import MediaPlayer
 
 struct Track: Identifiable, Equatable {
     let id = UUID()
@@ -49,7 +50,70 @@ class PlayerViewModel: ObservableObject {
     private var timeObserver: Any?
     private var visualizerTimer: AnyCancellable?
     
-    init() {}
+    init() {
+        setupRemoteCommandCenter()
+    }
+    
+    private func setupRemoteCommandCenter() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        
+        commandCenter.playCommand.isEnabled = true
+        commandCenter.playCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            if !self.isPlaying {
+                self.togglePlay()
+                return .success
+            }
+            return .commandFailed
+        }
+        
+        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.pauseCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            if self.isPlaying {
+                self.togglePlay()
+                return .success
+            }
+            return .commandFailed
+        }
+        
+        commandCenter.togglePlayPauseCommand.isEnabled = true
+        commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            self.togglePlay()
+            return .success
+        }
+        
+        commandCenter.nextTrackCommand.isEnabled = true
+        commandCenter.nextTrackCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            self.next()
+            return .success
+        }
+        
+        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.previousTrackCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            self.prev()
+            return .success
+        }
+    }
+    
+    private func updateNowPlayingInfo() {
+        guard let track = currentTrack else {
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            return
+        }
+        
+        var nowPlayingInfo = [String: Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = track.name
+        nowPlayingInfo[MPMediaItemPropertyArtist] = "Winamp"
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
     
     func addFiles(urls: [URL]) {
         let newTracks = urls.map { url in
@@ -80,16 +144,23 @@ class PlayerViewModel: ObservableObject {
         Task {
             if let durationValue = try? await asset.load(.duration) {
                 let d = CMTimeGetSeconds(durationValue)
-                await MainActor.run { self.duration = d }
+                await MainActor.run { 
+                    self.duration = d 
+                    self.updateNowPlayingInfo()
+                }
             }
         }
         
         // Time observation
-        timeObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { [weak self] time in
+        timeObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1.0, preferredTimescale: 600), queue: .main) { [weak self] time in
             let t = CMTimeGetSeconds(time)
             Task { @MainActor in 
                 if let self = self, !self.isScrubbing {
-                    self.currentTime = t 
+                    self.currentTime = t
+                    // Update periodically for the system lock screen/control center
+                    if Int(t) % 2 == 0 {
+                        self.updateNowPlayingInfo()
+                    }
                 }
             }
         }
@@ -102,6 +173,7 @@ class PlayerViewModel: ObservableObject {
             player?.play()
         }
         
+        updateNowPlayingInfo()
         startVisualizerTimer()
     }
     
@@ -126,6 +198,7 @@ class PlayerViewModel: ObservableObject {
             player?.play()
         }
         isPlaying.toggle()
+        updateNowPlayingInfo()
     }
     
     func stop() {
@@ -133,6 +206,7 @@ class PlayerViewModel: ObservableObject {
         player?.seek(to: .zero)
         isPlaying = false
         spectrum = Array(repeating: 0, count: 20)
+        updateNowPlayingInfo()
     }
     
     func next() {
@@ -164,6 +238,7 @@ class PlayerViewModel: ObservableObject {
     func seek(to seconds: Double) {
         let time = CMTime(seconds: seconds, preferredTimescale: 600)
         player?.seek(to: time)
+        updateNowPlayingInfo()
     }
     
     func clearPlaylist() {
@@ -172,5 +247,6 @@ class PlayerViewModel: ObservableObject {
         currentIndexInFiltered = -1
         currentTime = 0
         duration = 0
+        updateNowPlayingInfo()
     }
 }

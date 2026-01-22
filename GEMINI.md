@@ -11,6 +11,11 @@ A native macOS MP3 player inspired by the classic Winamp. Built with Swift, Swif
 
 ## History
 
+### [2026-01-21] Playlist Interaction Refinement | [log-20260121-interaction-refinement](./GEMINI--logs.md#log-20260121-interaction-refinement)
+- Implemented **Spacebar** shortcut for Play/Pause.
+- Added **Context Menu** (Reveal in Finder, Copy Path) to playlist items.
+- Enabled **Full-Row Selection** for the playlist tracks.
+
 ### [2026-01-21] Native Responsiveness Overhaul | [log-20260121-responsive-ui](./GEMINI--logs.md#log-20260121-responsive-ui)
 - Removed all fixed-width constraints (app now stretches to any window size).
 - Implemented a dynamic HUD with an adaptive spectrum analyzer.
