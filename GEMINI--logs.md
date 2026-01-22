@@ -326,3 +326,21 @@ User approved the FFT implementation plan.
 - **PlayerViewModel.swift**: Attached AVAudioPlayerNode to AVAudioEngine, installed a tap on the mainMixerNode, and performed FFT using Accelerate's vDSP_fft_zrip.
 - **PlayerView.swift**: Integrated SpectrumVisualizer subview with adaptive band mapping logic.
 - **Pointer Safety**: Used withUnsafeMutableBufferPointer to handle DSPSplitComplex pointers safely.
+
+<a name="log-20260122-web-pivot"></a>
+## [2026-01-22] Winamp Build: Web-Based UI Pivot
+
+**User Prompt:**
+User suggested pivoting to a web-based UI for easier iteration, planning to insert existing Swift functionality later.
+
+**Walkthrough:**
+### Features Implemented:
+1. **HTML Structure**: Created a semantic layout representing the classic Winamp HUD, Controls, and Playlist.
+2. **Premium CSS Styling**: Implemented a dark metallic theme with glassmorphism (vibrancy), neon green LCD fonts (VT323), and smooth interactive hover states.
+3. **Simulated Logic**: Added app.js to handle basic playback states, simulated visualizer animations, and drag-and-drop file detection.
+4. **Project Preservation**: Created a separate `web/` directory to keep the development environments distinct while iterating on design.
+
+**Technical Details:**
+- **index.html**: Uses VT323 Google Font for the retro feel.
+- **style.css**: Extensive use of `backdrop-filter: blur`, `linear-gradient`, and CSS Grid for a modern take on retro software.
+- **app.js**: Uses `requestAnimationFrame` for the simulated visualizer.

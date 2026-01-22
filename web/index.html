@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winamp Web - Retro Excellence</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Retro Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="winamp-container">
+        <!-- Main Player UI -->
+        <main class="player-main glass">
+            <!-- HUD / Display Section -->
+            <section class="hud-container">
+                <div class="lcd-display">
+                    <div class="lcd-top">
+                        <span id="kbps">192 kbps</span>
+                        <span id="khz">44 kHz</span>
+                        <div class="stereo-mono">
+                            <span class="active">Stereo</span>
+                            <span>Mono</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lcd-center">
+                        <div class="time-display">
+                            <span id="time">00:00</span>
+                        </div>
+                        <div class="visualizer" id="visualizer">
+                            <!-- Bars will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="lcd-bottom">
+                        <marquee id="track-title" behavior="scroll" direction="left">Welcome to Winamp Web - Drop files to play</marquee>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Controls Section -->
+            <section class="controls-container">
+                <div class="progress-bar-wrapper">
+                    <input type="range" id="progress-bar" min="0" max="100" value="0">
+                </div >
+                
+                <div class="button-grid">
+                    <button id="prev" class="btn-retro">PREV</button>
+                    <button id="play-pause" class="btn-retro play">PLAY</button>
+                    <button id="next" class="btn-retro">NEXT</button>
+                    <button id="shuffle" class="btn-retro toggle">SHUFFLE</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Playlist Section -->
+        <aside class="playlist-container glass">
+            <header class="playlist-header">
+                <input type="text" id="playlist-search" placeholder="Search playlist...">
+            </header>
+            <ul id="playlist-items">
+                <!-- Tracks will appear here -->
+                <li class="empty-state">No tracks loaded</li>
+            </ul>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

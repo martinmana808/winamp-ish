@@ -13,11 +13,12 @@ While web technologies are powerful, a true macOS experience requires **Native S
 
 ## The Solution
 A simple, high-performance, and visually stunning native macOS MP3 player.
-- **Direct Access**: Use files from their original location.
-- **Temporary Queue**: A playlist that exists for the session.
+- **AVAudioEngine**: High-fidelity audio with real-time FFT spectrum analysis.
+- **Hardware Integration**: System-wide media key support (MPRemoteCommandCenter).
+- **Direct Access**: Use files from their original location without importing.
 - **Retro Aesthetic**: A faithful recreation of the classic Winamp skin, modernized for 2026.
 
 ## Future Plans
-- Metal-accelerated visualizers.
-- System-wide media key support.
-- Custom skin loading via Swift package resources.
+- **Playlist Persistence**: Saving your queue and state between launches.
+- **Custom Skinning**: Expanding the UI to allow classic .wsz skin loading.
+- **CoreAudio EQ**: Implementing a 10-band native equalizer.
