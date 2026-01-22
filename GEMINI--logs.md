@@ -308,3 +308,21 @@ I opened it in xcode. now what?
 - **Package.swift**: Added resources to executableTarget.
 - **PlayerView.swift**: Appended swift-native #Preview block.
 - **Branding**: Created Sources/Winamp/Resources/Assets.xcassets/AppIcon.appiconset with a valid Contents.json and 1024px source image.
+
+<a name="log-20260122-fft-visualizer"></a>
+## [2026-01-22] Winamp Build: Real-Time FFT Spectrum Visualizer
+
+**User Prompt:**
+User approved the FFT implementation plan.
+
+**Walkthrough:**
+### Features Implemented:
+1. **AVAudioEngine Refactor**: Migrated from AVPlayer to AVAudioEngine to enable raw audio tapping.
+2. **Accelerate Framework FFT**: Implemented real-time Fast Fourier Transform analysis on the live audio buffer.
+3. **64-Band Spectrum Analyzer**: Upgraded the UI from random bars to a detailed 64-band frequency analyzer that reacts exactly to the music (bass to treble).
+4. **Optimized SwiftUI View**: Refactored the visualizer into a dedicated SpectrumVisualizer subview to ensure high-performance rendering and fix compiler type-checking issues.
+
+**Technical Details:**
+- **PlayerViewModel.swift**: Attached AVAudioPlayerNode to AVAudioEngine, installed a tap on the mainMixerNode, and performed FFT using Accelerate's vDSP_fft_zrip.
+- **PlayerView.swift**: Integrated SpectrumVisualizer subview with adaptive band mapping logic.
+- **Pointer Safety**: Used withUnsafeMutableBufferPointer to handle DSPSplitComplex pointers safely.

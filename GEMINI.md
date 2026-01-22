@@ -11,6 +11,11 @@ A native macOS MP3 player inspired by the classic Winamp. Built with Swift, Swif
 
 ## History
 
+### [2026-01-22] Real-Time FFT Spectrum Visualizer | [log-20260122-fft-visualizer](./GEMINI--logs.md#log-20260122-fft-visualizer)
+- Switched to **AVAudioEngine** for advanced audio tapping and processing.
+- Implemented **Fast Fourier Transform (FFT)** using the Accelerate framework.
+- Upgraded the visualizer to a responsive **64-band live frequency analyzer**.
+
 ### [2026-01-22] Xcode Integration & Branding | [log-20260122-branding](./GEMINI--logs.md#log-20260122-branding)
 - Set up **Xcode SwiftUI Previews** for real-time UI design.
 - Generated and integrated a **Retro App Icon**.

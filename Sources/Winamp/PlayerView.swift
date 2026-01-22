@@ -88,16 +88,9 @@ struct PlayerView: View {
                             .font(.system(size: 9))
                             .foregroundColor(WinampColors.text.opacity(0.7))
                             
-                            // Real animated spectrum bars - Adaptive count
+                            // Real animated spectrum bars
                             GeometryReader { geo in
-                                HStack(alignment: .bottom, spacing: 1) {
-                                    let barCount = Int(geo.size.width / 3)
-                                    ForEach(0..<max(1, barCount), id: \.self) { i in
-                                        Rectangle()
-                                            .fill(WinampColors.text)
-                                            .frame(width: 2, height: i < vm.spectrum.count ? CGFloat(vm.spectrum[i]) : CGFloat.random(in: 2...12))
-                                    }
-                                }
+                                SpectrumVisualizer(spectrum: vm.spectrum, width: geo.size.width)
                             }
                             .frame(height: 15)
                         }
@@ -272,6 +265,23 @@ struct PlayerView: View {
                         vm.addFiles(urls: [url])
                     }
                 }
+            }
+        }
+    }
+}
+
+struct SpectrumVisualizer: View {
+    let spectrum: [Float]
+    let width: CGFloat
+    
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 1) {
+            let barCount = Int(width / 3)
+            ForEach(0..<max(1, barCount), id: \.self) { i in
+                let spectrumIndex = min(spectrum.count - 1, Int(Float(i) / Float(max(1, barCount)) * Float(spectrum.count)))
+                Rectangle()
+                    .fill(WinampColors.text)
+                    .frame(width: 2, height: CGFloat(spectrum[spectrumIndex]))
             }
         }
     }
