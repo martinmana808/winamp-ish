@@ -284,9 +284,10 @@ it has to be a responsive app. The window expands but the 'actual design/app' st
 1. **Spacebar Shortcut**: Added `.keyboardShortcut(.space, modifiers: [])` to the Play/Pause button. This allows toggling playback anywhere in the app unless a text field is focused.
 2. **Context Menu**: Implemented `.contextMenu` on playlist rows with "Copy Path" (using `NSPasteboard`) and "Reveal in Finder" (using `NSWorkspace`).
 3. **Full-Row Selection**: Applied `.contentShape(Rectangle())` and moved `onTapGesture` to the row container, ensuring the entire row width is hit-testable.
+4. **Double-Click to Play**: Refactored the gestures on each row. A single click now updates the `currentIndexInFiltered` for highlighting, while a double-click (`count: 2`) triggers the `loadTrack` and playback logic.
 
 **Technical Details:**
 - **PlayerView.swift**:
     - Wrapped the playlist item `HStack` in a container that fills the entire row width.
-    - Added `contextMenu` and `keyboardShortcut` modifiers.
+    - Added `contextMenu`, `keyboardShortcut`, and multi-tap `onTapGesture` modifiers.
     - Verified that spacebar in the search field still works correctly for typing.

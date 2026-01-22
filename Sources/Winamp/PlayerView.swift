@@ -197,9 +197,12 @@ struct PlayerView: View {
                                 }
                                 .padding(.vertical, 1)
                                 .contentShape(Rectangle()) // Make the whole row clickable
-                                .onTapGesture {
+                                .onTapGesture(count: 2) {
                                     vm.loadTrack(at: index)
                                     if !vm.isPlaying { vm.togglePlay() }
+                                }
+                                .onTapGesture(count: 1) {
+                                    vm.currentIndexInFiltered = index
                                 }
                                 .contextMenu {
                                     Button("Copy Path") {
