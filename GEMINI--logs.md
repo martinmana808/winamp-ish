@@ -291,3 +291,20 @@ it has to be a responsive app. The window expands but the 'actual design/app' st
     - Wrapped the playlist item `HStack` in a container that fills the entire row width.
     - Added `contextMenu`, `keyboardShortcut`, and multi-tap `onTapGesture` modifiers.
     - Verified that spacebar in the search field still works correctly for typing.
+
+<a name="log-20260122-branding"></a>
+## [2026-01-22] Winamp Build: Xcode Integration & Branding
+
+**User Prompt:**
+I opened it in xcode. now what?
+
+**Walkthrough:**
+### Features Implemented:
+1. **Xcode SwiftUI Previews**: Added #Preview block to PlayerView.swift to enable real-time UI design in Xcode's Canvas.
+2. **Retro App Icon**: Generated a high-quality retro metallic icon and integrated it via Assets.xcassets.
+3. **SPM Resource Configuration**: Updated Package.swift to include a Resources directory and enabled .process("Resources") so the app icon and future assets are correctly compiled into the bundle.
+
+**Technical Details:**
+- **Package.swift**: Added resources to executableTarget.
+- **PlayerView.swift**: Appended swift-native #Preview block.
+- **Branding**: Created Sources/Winamp/Resources/Assets.xcassets/AppIcon.appiconset with a valid Contents.json and 1024px source image.

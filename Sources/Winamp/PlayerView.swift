@@ -276,3 +276,8 @@ struct PlayerView: View {
         }
     }
 }
+
+#Preview {
+    PlayerView()
+        .frame(width: 300, height: 500)
+}

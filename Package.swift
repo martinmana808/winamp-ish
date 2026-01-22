@@ -9,7 +9,8 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "Winamp",
-            path: "Sources/Winamp"
+            path: "Sources/Winamp",
+            resources: [.process("Resources")]
         )
     ]
 )
