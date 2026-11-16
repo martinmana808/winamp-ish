@@ -10,7 +10,8 @@ let package = Package(
         .executableTarget(
             name: "Winamp",
             path: "Sources/Winamp",
-            resources: [.process("Resources")]
+            exclude: ["Resources"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
         )
     ]
 )
