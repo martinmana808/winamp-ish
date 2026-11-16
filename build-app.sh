@@ -1,14 +1,15 @@
 #!/bin/bash
-# Builds Winamp.app into ./build. Pass --install to also copy it to /Applications.
+# Builds Winamp-ish.app (universal) into ./build, plus a zip for distribution.
+# Pass --install to also copy it to /Applications.
 set -euo pipefail
 cd "$(dirname "$0")"
 
-swift build -c release
+swift build -c release --arch arm64 --arch x86_64
 
-APP=build/Winamp.app
+APP=build/Winamp-ish.app
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp .build/release/Winamp "$APP/Contents/MacOS/Winamp"
+cp .build/apple/Products/Release/Winamp "$APP/Contents/MacOS/Winamp"
 
 # Icon
 SRC=Sources/Winamp/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024.png
@@ -26,8 +27,8 @@ cat > "$APP/Contents/Info.plist" <<'EOF'
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>Winamp</string>
-  <key>CFBundleDisplayName</key><string>Winamp</string>
+  <key>CFBundleName</key><string>Winamp-ish</string>
+  <key>CFBundleDisplayName</key><string>Winamp-ish</string>
   <key>CFBundleIdentifier</key><string>com.martinmana.winamp</string>
   <key>CFBundleExecutable</key><string>Winamp</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
@@ -56,10 +57,11 @@ cat > "$APP/Contents/Info.plist" <<'EOF'
 EOF
 
 codesign --force --sign - "$APP"
-echo "Built $APP"
+ditto -c -k --keepParent "$APP" build/Winamp-ish.zip
+echo "Built $APP and build/Winamp-ish.zip"
 
 if [[ "${1:-}" == "--install" ]]; then
-  rm -rf /Applications/Winamp.app
+  rm -rf /Applications/Winamp.app /Applications/Winamp-ish.app
   cp -R "$APP" /Applications/
-  echo "Installed to /Applications/Winamp.app"
+  echo "Installed to /Applications/Winamp-ish.app"
 fi

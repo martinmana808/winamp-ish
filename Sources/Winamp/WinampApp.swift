@@ -21,7 +21,7 @@ struct WinampApp: App {
     @StateObject private var player = Player.shared
 
     var body: some Scene {
-        Window("Winamp", id: "main") {
+        Window("Winamp-ish", id: "main") {
             ContentView().environmentObject(player)
         }
         .windowStyle(.hiddenTitleBar)

@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Winamp-ish — un reproductor de mp3 para Mac, sin vueltas</title>
+<meta name="description" content="Winamp-ish es un reproductor de música para Mac: arrastrás tus mp3 y suena. Gratis.">
+<meta property="og:title" content="Winamp-ish">
+<meta property="og:description" content="Un reproductor de mp3 para Mac. Simple, sin vueltas.">
+<meta property="og:image" content="/icon.png">
+<link rel="icon" href="/icon.png">
+<style>
+  :root {
+    --bg: #0e1110;
+    --tint: #1f4d3a;
+    --text: #f2f5f3;
+    --muted: #a3ada8;
+    --accent: #5fe3a1;
+    --line: rgba(255, 255, 255, 0.1);
+    --card: rgba(255, 255, 255, 0.05);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: var(--bg) linear-gradient(180deg, var(--tint) 0, var(--bg) 720px) no-repeat;
+    min-height: 100vh;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1fr 320px; gap: 56px; align-items: center; padding: 72px 0 64px; }
+  .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .brand img { width: 56px; height: 56px; border-radius: 13px; }
+  .brand span { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(36px, 6vw, 56px); line-height: 1.05; letter-spacing: -0.03em; margin: 0 0 18px; text-wrap: balance; }
+  .lead { font-size: 20px; color: var(--muted); margin: 0 0 32px; max-width: 30em; }
+
+  form { display: flex; gap: 10px; flex-wrap: wrap; max-width: 460px; }
+  input[type="email"] {
+    flex: 1 1 220px; min-width: 0; height: 50px; padding: 0 16px;
+    font: inherit; color: var(--text);
+    background: rgba(0, 0, 0, 0.3); border: 1px solid var(--line); border-radius: 12px; outline: none;
+  }
+  input[type="email"]::placeholder { color: #7d8782; }
+  input[type="email"]:focus { border-color: var(--accent); }
+  button {
+    height: 50px; padding: 0 22px; font: inherit; font-weight: 600; cursor: pointer;
+    color: #06231a; background: var(--accent); border: 0; border-radius: 12px;
+  }
+  button:hover { filter: brightness(1.08); }
+  button:disabled { opacity: 0.6; cursor: default; }
+  .note { font-size: 14px; color: var(--muted); margin: 14px 0 0; min-height: 1.5em; }
+  .note.error { color: #ff9c8f; }
+  .done { font-size: 18px; margin: 0; }
+
+  /* Player mock */
+  .player {
+    border-radius: 14px; overflow: hidden; border: 1px solid var(--line);
+    background: linear-gradient(180deg, #2c6b52, #121413 78%);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+    font-size: 13px; user-select: none;
+  }
+  .player .top { padding: 14px 18px 16px; text-align: center; }
+  .lights { display: flex; gap: 7px; margin-bottom: 14px; }
+  .lights i { width: 11px; height: 11px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); }
+  .art {
+    width: 170px; height: 170px; margin: 0 auto 14px; border-radius: 10px;
+    background: radial-gradient(circle at 30% 25%, #b8ffd9, #2fbf85 45%, #0c5a43 100%);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  }
+  .player .title { font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+  .bar { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.18); }
+  .bar b { display: block; width: 38%; height: 100%; border-radius: 2px; background: #fff; }
+  .times { display: flex; justify-content: space-between; color: rgba(255, 255, 255, 0.55); font-size: 11px; margin: 5px 0 8px; }
+  .controls { display: flex; justify-content: center; align-items: center; gap: 22px; }
+  .controls svg { width: 18px; height: 18px; fill: #fff; }
+  .controls svg.big { width: 30px; height: 30px; }
+  .controls svg.on { fill: var(--accent); }
+  .controls svg.off { fill: rgba(255, 255, 255, 0.5); }
+  .rows { border-top: 1px solid var(--line); padding: 6px 0; }
+  .rows div { padding: 5px 18px; color: rgba(255, 255, 255, 0.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rows .now { font-weight: 600; color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+  /* Sections */
+  section { padding: 44px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 26px; letter-spacing: -0.02em; margin: 0 0 22px; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; padding: 0; margin: 0; list-style: none; }
+  .features li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+  .features strong { display: block; margin-bottom: 4px; }
+  .features span { color: var(--muted); font-size: 15px; }
+  ol { margin: 0; padding-left: 1.3em; max-width: 44em; }
+  ol li { margin-bottom: 10px; }
+  .muted { color: var(--muted); max-width: 44em; }
+  code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(255, 255, 255, 0.08); padding: 3px 7px; border-radius: 6px; overflow-wrap: anywhere; }
+  footer { padding: 32px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+
+  @media (max-width: 800px) {
+    .hero { grid-template-columns: 1fr; gap: 44px; padding: 44px 0; }
+    .player { max-width: 320px; margin: 0 auto; width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <div class="brand"><img src="/icon.png" alt=""><span>Winamp-ish</span></div>
+      <h1>Un reproductor de mp3 para Mac. Sin vueltas.</h1>
+      <p class="lead">Arrastrás tu música a la ventana y suena. Sin cuenta, sin biblioteca que organizar, sin suscripción.</p>
+
+      <div id="gate">
+        <form id="form" novalidate>
+          <input type="email" id="email" name="email" placeholder="tu@email.com" autocomplete="email" required aria-label="Tu email">
+          <button type="submit" id="submit">Descargar gratis</button>
+        </form>
+        <p class="note" id="note">v1.0 · macOS 14 o superior · Apple Silicon e Intel. Te pedimos el email para avisarte cuando haya una versión nueva.</p>
+      </div>
+    </div>
+
+    <div class="player" aria-hidden="true">
+      <div class="top">
+        <div class="lights"><i></i><i></i><i></i></div>
+        <div class="art"></div>
+        <div class="title">Tema que te gusta</div>
+        <div class="bar"><b></b></div>
+        <div class="times"><span>1:24</span><span>3:41</span></div>
+        <div class="controls">
+          <svg class="on" viewBox="0 0 24 24"><path d="M16 3h5v5h-2V6.4l-4.3 4.3-1.4-1.4L17.6 5H16V3zM3 6h4.5l9.9 11H19v-1.6h2V21h-5v-2h-1.5L4.6 8H3V6zm0 11h2.6l3-3.3 1.4 1.5L6.5 19H3v-2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M11 12l9-6v12l-9-6zM4 6h2.5v12H4z"/></svg>
+          <svg class="big" viewBox="0 0 24 24"><path d="M7 4h4v16H7zM13 4h4v16h-4z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M13 12L4 6v12l9-6zM17.5 6H20v12h-2.5z"/></svg>
+          <svg class="off" viewBox="0 0 24 24"><path d="M7 7h10v-3l4 4-4 4V9H7v3H5V7h2zm10 10H7v3l-4-4 4-4v3h10v-3h2v5h-2z"/></svg>
+        </div>
+      </div>
+      <div class="rows">
+        <div>Otro tema</div>
+        <div class="now">Tema que te gusta</div>
+        <div>El que sigue</div>
+        <div>Uno más largo de lo normal (Remix)</div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Qué hace</h2>
+    <ul class="features">
+      <li><strong>Arrastrar y listo</strong><span>Soltás archivos o carpetas enteras en la ventana. También abre playlists .m3u.</span></li>
+      <li><strong>Shuffle y repeat</strong><span>Aleatorio que recorre toda la lista sin repetir, y repetir lista o un solo tema.</span></li>
+      <li><strong>Se tiñe con la tapa</strong><span>Muestra el arte del disco y pinta todo el reproductor con su color.</span></li>
+      <li><strong>Ordenar y reordenar</strong><span>Por nombre o por fecha, o arrastrando los temas a mano.</span></li>
+      <li><strong>Exportar playlist</strong><span>Guardás tu lista como .m3u8 para abrirla después o en otro reproductor.</span></li>
+      <li><strong>Se acuerda de todo</strong><span>Cerrás y al volver está tu lista como la dejaste. Funciona con las teclas multimedia.</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Cómo abrirla la primera vez</h2>
+    <p class="muted">Winamp-ish es una app independiente y todavía no está certificada por Apple, así que macOS te va a pedir que la autorices una vez:</p>
+    <ol>
+      <li>Descomprimí el archivo y arrastrá <strong>Winamp-ish</strong> a tu carpeta Aplicaciones.</li>
+      <li>Abrila. macOS va a avisar que no pudo verificarla: tocá <strong>Listo</strong>.</li>
+      <li>Andá a <strong>Ajustes del Sistema → Privacidad y seguridad</strong>, bajá hasta el final y tocá <strong>Abrir igualmente</strong>.</li>
+    </ol>
+    <p class="muted">Si preferís la Terminal, esto hace lo mismo: <code>xattr -dr com.apple.quarantine /Applications/Winamp-ish.app</code></p>
+  </section>
+
+  <footer>
+    Código abierto en <a href="https://github.com/martinmana808/winamp-ish">GitHub</a>.
+    Winamp-ish es un proyecto independiente, sin relación con Winamp ni con sus dueños.
+  </footer>
+</div>
+
+<script>
+  const form = document.getElementById("form");
+  const note = document.getElementById("note");
+  const button = document.getElementById("submit");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    note.className = "note";
+    button.disabled = true;
+    button.textContent = "Un segundo…";
+    try {
+      const response = await fetch("/api/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Algo falló. Probá de nuevo.");
+
+      const done = document.createElement("p");
+      done.className = "done";
+      done.append("¡Gracias! La descarga empieza sola. Si no arranca, ");
+      const link = document.createElement("a");
+      link.href = data.url;
+      link.textContent = "bajala desde acá";
+      done.append(link, ".");
+      document.getElementById("gate").replaceChildren(done);
+      window.location.href = data.url;
+    } catch (error) {
+      note.className = "note error";
+      note.textContent = error instanceof TypeError ? "No hay conexión. Probá de nuevo." : error.message;
+      button.disabled = false;
+      button.textContent = "Descargar gratis";
+    }
+  });
+</script>
+</body>
+</html>
